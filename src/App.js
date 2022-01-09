@@ -16,6 +16,7 @@ import TemplateModule from './TemplateModule';
 import Transfer from './Transfer';
 import Upgrade from './Upgrade';
 import Kitties from './Kitties';
+import KittyCount from './KittyCount';
 
 function Main () {
   const [accountAddress, setAccountAddress] = useState(null);
@@ -61,6 +62,7 @@ function Main () {
             <Metadata />
             <BlockNumber />
             <BlockNumber finalized />
+            <KittyCount />
           </Grid.Row>
           <Grid.Row>
             <Kitties accountPair={accountPair} />
@@ -75,9 +77,6 @@ function Main () {
           <Grid.Row>
             <Interactor accountPair={accountPair} />
             <Events />
-          </Grid.Row>
-          <Grid.Row>
-            <TemplateModule accountPair={accountPair} />
           </Grid.Row>
         </Grid>
       </Container>

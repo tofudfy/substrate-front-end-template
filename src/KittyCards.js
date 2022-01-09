@@ -35,7 +35,7 @@ const TransferModal = props => {
         attrs={{
           palletRpc: 'substrateKitties',
           callable: 'transfer',
-          inputParams: [formValue.target, kitty.id],
+          inputParams: [kitty.id, formValue.target],
           paramFields: [true, true]
         }}
       />
@@ -82,6 +82,45 @@ const SetPrice = props => {
   </Modal>;
 };
 
+// --- Buy Kitty ---
+
+const BuyKitty = props => {
+  const { kitty, accountPair, setStatus } = props;
+  const [open, setOpen] = React.useState(false);
+  const [formValue, setFormValue] = React.useState({});
+
+  const formChange = key => (ev, el) => {
+    setFormValue({ ...formValue, [key]: el.value });
+  };
+
+  const confirmAndClose = (unsub) => {
+    setOpen(false);
+    if (unsub && typeof unsub === 'function') unsub();
+  };
+
+  return <Modal onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}
+                trigger={<Button basic color='blue'>Buy Kitty</Button>}>
+    <Modal.Header>Bid Kitty Price</Modal.Header>
+    <Modal.Content><Form>
+      <Form.Input fluid label='Kitty ID' readOnly value={kitty.id}/>
+      <Form.Input fluid label='Price' placeholder='Enter Price' onChange={formChange('target')}/>
+    </Form></Modal.Content>
+    <Modal.Actions>
+      <Button basic color='grey' onClick={ () => setOpen(false)}>Cancel</Button>
+      <TxButton
+          accountPair={accountPair} label='Buy Kitty' type='SIGNED-TX' setStatus={setStatus}
+          onClick={confirmAndClose}
+          attrs={{
+            palletRpc: 'substrateKitties',
+            callable: 'buyKitty',
+            inputParams: [kitty.id, formValue.target],
+            paramFields: [true, true]
+          }}
+      />
+    </Modal.Actions>
+  </Modal>;
+};
+
 // --- About Kitty Card ---
 
 const KittyCard = props => {
@@ -117,7 +156,9 @@ const KittyCard = props => {
           <SetPrice kitty={kitty} accountPair={accountPair} setStatus={setStatus}/>
           <TransferModal kitty={kitty} accountPair={accountPair} setStatus={setStatus}/>
         </>
-      : ''
+      : price !== null
+        ? <BuyKitty kitty={kitty} accountPair={accountPair} setStatus={setStatus}/>
+        : ''
     }</Card.Content>
   </Card>;
 };
